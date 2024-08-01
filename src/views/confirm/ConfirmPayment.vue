@@ -37,7 +37,7 @@
                         </div>
                         <div class="card">
                             <div class="card-title">安全碼</div>
-                            <el-input placeholder="000" v-model="cardSafeNumber" maxlength="3"></el-input>
+                            <el-input placeholder="000" v-model="cardSafeNumber" maxlength="3" @input="formatcardSafeNumber"></el-input>
                             <div class="error" v-show="!cardSafeNumberValid">此欄不得為空</div>
                             <div class="error" v-show="!cardSafeNumberFormat">請輸入正確格式</div>
                         </div>
@@ -175,6 +175,11 @@ function formatCardValidDate() {
     cardValidDate.value = cardValidDate.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '').replace(/(.{2})(?=.)/g, '$1/').trim();
 }
 
+//格式化安全碼
+function formatcardSafeNumber(){
+    cardSafeNumber.value=cardSafeNumber.value.replace(/\D/g, '');
+}
+
 //檢查月份
 function isValidMonth(month: string) {
     const monthNum = parseInt(month, 10);
@@ -216,7 +221,8 @@ async function toComplete() {
             batch.set(orderDocRef, {
                 order: finalProducts,
                 total: shoppingCartStore.totalPrice,
-                time: getOrderTime()
+                time: getOrderTime(),
+                state:'訂單處理中'
             });
             
             // 更新每個產品的庫存
@@ -255,8 +261,8 @@ async function toComplete() {
         
     } else {
         ElMessage({
-            message: '請輸入完整資訊',
-            type: 'warning',
+            message: '請輸入正確資訊',
+            type: 'error',
             plain: true,
         });
     }

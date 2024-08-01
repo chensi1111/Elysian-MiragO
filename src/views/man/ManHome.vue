@@ -4,7 +4,7 @@
     <div class="info sale">低至5折</div>
     <div class="info small" @click="toSaleClothes('')">立即選購</div>
   </div>
-  <div class="title">活動限定款市:低至5折</div>
+  <div class="title">活動限定款式:低至5折</div>
   <div class="products-container">
     <div class="scroll-button left" @click="scrollLeft" v-show="showLeftButton">
       <CaretLeft />
@@ -16,7 +16,7 @@
           <i :class="['fa-heart', product.favorite ? 'fa-solid' : 'fa-regular']"
             @click="toggleFavorite($event, product)"></i>
           <div class="special">活動限定</div>
-          <div class="cover">
+          <div class="cover" v-if="windowWidth>=767">
             <div class="choose">選擇您的尺碼</div>
             <div class="sizes">
               <div class="size" v-if="product.sizeXS !== undefined"
@@ -73,7 +73,7 @@ import { useRouter } from "vue-router";
 //資料
 //分類櫥窗資料
 const items = reactive([
-  { topic: "夏日衣櫥", image: normalPic, option1: "選購T恤", option2: "選購牛仔褲", type1: "t-shirt", type2: "jeans" },
+  { topic: "夏日衣櫥", image: normalPic, option1: "選購T恤", option2: "選購牛仔褲", type1: "suit", type2: "jeans" },
   { topic: "內衣首選", image: underwearPic, option1: "選購平口褲", option2: "選購三角褲", type1: "boxers", type2: "briefs" },
   { topic: "運動穿搭", image: fitnessPic, option1: "選購運動T恤", option2: "選購運動短褲", type1: "gym-suit", type2: "sport-pant" },
   { topic: "時尚配件", image: accessoryPic, option1: "選購包款", option2: "選購帽款", type1: "bag", type2: "hat" },
@@ -225,24 +225,31 @@ function updateButtonVisibility() {
 let isScrolling = false;
 const productMargin = ref(20)
 
+//視窗大小
+const windowWidth = ref(window.innerWidth);
+function updateWindowWidth() {
+    windowWidth.value = window.innerWidth;
+}
+
+//改變margin跟count
 function changeMarginAndCount() {
-  if (window.innerWidth <= 1200 && window.innerWidth > 1024) {
+  if (windowWidth.value <= 1200 && windowWidth.value > 1024) {
     productMargin.value = 10
     productNumber.value = 5
   }
-  if (window.innerWidth <= 1024 && window.innerWidth > 767) {
+  if (windowWidth.value <= 1024 && windowWidth.value > 767) {
     productMargin.value = 10
     productNumber.value = 4
   }
-  if (window.innerWidth <= 767 && window.innerWidth > 600) {
+  if (windowWidth.value <= 767 && windowWidth.value > 600) {
     productMargin.value = 10
     productNumber.value = 3
   }
-  if (window.innerWidth <= 600 && window.innerWidth >= 414) {
+  if (windowWidth.value <= 600 && windowWidth.value >= 414) {
     productMargin.value = 10
     productNumber.value = 2
   }
-  if (window.innerWidth < 414) {
+  if (windowWidth.value < 414) {
     productMargin.value = 8
     productNumber.value = 2
   }
@@ -345,12 +352,14 @@ onMounted(async () => {
   getProductWidth();
   updateMaxScrollCount();
   changeMarginAndCount();
+  window.addEventListener('resize', updateWindowWidth);
   window.addEventListener("resize", getProductWidth);
   window.addEventListener("resize", changeMarginAndCount);
   updateButtonVisibility();
 });
 
 onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateWindowWidth);
   window.removeEventListener("resize", getProductWidth);
   window.addEventListener("resize", changeMarginAndCount);
 });

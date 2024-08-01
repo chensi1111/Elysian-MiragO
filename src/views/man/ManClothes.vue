@@ -1,9 +1,9 @@
 <template>
     <div class="container">
-        <div class="title">服飾</div>
+        <div class="title">{{titleName}}</div>
         <el-breadcrumb separator="/">
             <el-breadcrumb-item :to="{ path: '/man' }">男士</el-breadcrumb-item>
-            <el-breadcrumb-item v-if="!isSaleProducts">服飾</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="!isSaleProducts">{{titleName}}</el-breadcrumb-item>
             <el-breadcrumb-item v-if="isSaleProducts">特價</el-breadcrumb-item>
             <el-breadcrumb-item v-if="selectedTypeName">{{ selectedTypeName }}</el-breadcrumb-item>
         </el-breadcrumb>
@@ -14,8 +14,8 @@
             </div>
         </div>
         <div ref="filterContainer" class="filter-container" :class="{ 'is-fixed': isFixed }">
-            <div class="filter " @click="showFilter" v-show="!openFilter">篩選及排序<i class="fa-solid fa-sliders"></i></div>
-            <div class="filter " @click="showFilter" v-show="openFilter">關閉篩選器<i class="fa-solid fa-sliders"></i></div>
+            <div class="filter " @click="showFilter" v-show="!productFilterStore.filterOpen">篩選及排序<i class="fa-solid fa-sliders"></i></div>
+            <div class="filter " @click="showFilter" v-show="productFilterStore.filterOpen">關閉篩選器<i class="fa-solid fa-sliders"></i></div>
             <div class="filter-types">
                 <div class="filter-type" @click="removeType" v-show="selectedTypeName">{{ selectedTypeName }}
                     <i class="fa-solid fa-x"></i>
@@ -67,7 +67,7 @@
             </div>
         </div>
         <div class="content">
-            <TheFilter v-show="openFilter"></TheFilter>
+            <TheFilter v-show="productFilterStore.filterOpen"></TheFilter>
             <div class="products">
                 <div class="product" v-for="(product, index) in filteredProducts" :key="index"
                     :style="{ width: productWidth, height: productHeight }" @click="toProductInfo(product)">
@@ -77,7 +77,7 @@
                         <i :class="['fa-heart', product.favorite ? 'fa-solid' : 'fa-regular']"
                             @click="toggleFavorite($event, product)"></i>
                         <div class="special" v-if="product.sale">活動限定</div>
-                        <div class="cover">
+                        <div class="cover" v-if="windowWidth >= 767">
                             <div class="choose">選擇您的尺碼</div>
                             <div class="sizes">
                                 <div class="size" v-for="sizeOption in filteredSizes(product)" :key="sizeOption.label"
@@ -119,13 +119,37 @@ import pantsPic from '@/assets/man/pants.jpg'
 import sportPic from '@/assets/man/sport.jpg'
 import shirtPic from '@/assets/man/shirt.jpg'
 
+const titleName = computed(() => {
+  if (productFilterStore.typeFilter === 'sport' ||
+      productFilterStore.typeFilter === 'gym-suit' ||
+      productFilterStore.typeFilter === 'sport-suit' ||
+      productFilterStore.typeFilter === 'sport-pant') {
+    return '運動休閒';
+  }
+  if (productFilterStore.typeFilter === 'underwear' ||
+      productFilterStore.typeFilter === 'boxers' ||
+      productFilterStore.typeFilter === 'boxer-briefs' ||
+      productFilterStore.typeFilter === 'briefs') {
+    return '內衣';
+  }
+  if (productFilterStore.typeFilter === 'accessory' ||
+      productFilterStore.typeFilter === 'shoe' ||
+      productFilterStore.typeFilter === 'hat' ||
+      productFilterStore.typeFilter === 'bag' ||
+      productFilterStore.typeFilter === 'wallet' ||
+      productFilterStore.typeFilter === 'belt') {
+    return '配件';
+  }
+  return '所有商品';
+});
+
 const items = ref<any[]>([
-    { title: "T恤+Polo衫", image: TshirtPic, type: "suit" },
+    { title: "T恤 & Polo衫", image: TshirtPic, type: "suit" },
     { title: "襯衫", image: shirtPic, type: "shirt" },
     { title: "運動衫", image: sportPic, type: "sport-suit" },
-    { title: "大衣+外套", image: jacketPic, type: "coat" },
+    { title: "大衣 & 外套", image: jacketPic, type: "coat" },
     { title: "牛仔褲", image: jeansPic, type: "jeans" },
-    { title: "長褲+短褲", image: pantsPic, type: "pant" },
+    { title: "長褲 & 短褲", image: pantsPic, type: "pant" },
 ])
 
 const productsInfoStore = useProductsInfoStore()
@@ -173,21 +197,21 @@ function productFilter(type: string) {
 const selectedTypeName = computed(() => {
     switch (selectedType.value) {
         case 'suit':
-            return "T恤 + Polo衫";
+            return "T恤 & Polo衫";
         case 'shirt':
             return "襯衫";
         case 'sport-suit':
             return "運動衫";
         case 'coat':
-            return "大衣+外套";
+            return "大衣 & 外套";
         case 'jeans':
             return "牛仔褲";
         case 'pant':
-            return "長褲+短褲";
+            return "長褲 & 短褲";
         case 'sport':
             return "運動休閒"
         case 'gym-suit':
-            return "T恤 + 背心"
+            return "運動T恤 & 背心"
         case 'sport-pant':
             return "運動褲"
         case 'underwear':
@@ -347,17 +371,21 @@ const filteredProductsFull = computed(() => {
     // 排序
     if (selectedSort.value) {
         result.sort((a, b) => {
-            // 先根據 sale 狀態進行排序
-            if (a.sale && !b.sale) {
-                return -1; // a 在 b 前
-            }
-            if (!a.sale && b.sale) {
-                return 1; // b 在 a 前
+            const priceA = a.sale ? a.price / 2 : a.price;
+            const priceB = b.sale ? b.price / 2 : b.price;
+
+            if (selectedSort.value === 'original') {
+                if (a.sale && !b.sale) {
+                    return -1; // a 在 b 前
+                }
+                if (!a.sale && b.sale) {
+                    return 1; // b 在 a 前
+                }
             }
             if (selectedSort.value === 'high') {
-                return b.price - a.price; // 高價優先
+                return priceB - priceA; // 高價優先
             } else if (selectedSort.value === 'low') {
-                return a.price - b.price; // 低價優先
+                return priceA - priceB; // 低價優先
             }
             return 0;
         });
@@ -445,7 +473,7 @@ const productHeight = computed(() => {
         case 2:
             return `${productHeightNumber.value + 250}px`;
         case 1:
-            return `${productHeightNumber.value + 400}px`;
+            return `${productHeightNumber.value + 300}px`;
         default:
             return `${productHeightNumber.value}px`;
     }
@@ -460,7 +488,7 @@ const productContainerHeight = computed(() => {
         case 2:
             return `${productHeightNumber.value + 150}px`;
         case 1:
-            return `${productHeightNumber.value + 300}px`;
+            return `${productHeightNumber.value + 200}px`;
         default:
             return `${productHeightNumber.value}px`;
     }
@@ -618,9 +646,8 @@ watch(products, async () => {
 });
 
 //顯示篩選器
-const openFilter = ref(false)
 function showFilter() {
-    openFilter.value = !openFilter.value
+    productFilterStore.filterOpen=!productFilterStore.filterOpen
 }
 
 //顯示更多商品
@@ -698,7 +725,7 @@ function toProductInfo(product: any) {
     box-sizing: border-box;
     padding: 20px;
     top: 150px;
-    z-index: 50;
+    z-index: 90;
 }
 
 .filter-types {
@@ -973,10 +1000,10 @@ function toProductInfo(product: any) {
         padding: 10px 20px 10px 0;
     }
 
-    .array{
+    .array {
         height: 25px;
     }
-    
+
     .products {
         gap: 10px;
     }
@@ -990,7 +1017,7 @@ function toProductInfo(product: any) {
         border-radius: 30px;
     }
 
-    .choose{
+    .choose {
         font-size: 14px
     }
 
@@ -1034,12 +1061,12 @@ function toProductInfo(product: any) {
         padding: 3px 8px
     }
 
-    .cover{
+    .cover {
         height: 80px;
         bottom: -80px;
     }
 
-    .choose{
+    .choose {
         font-size: 12px
     }
 

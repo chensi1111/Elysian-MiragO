@@ -27,6 +27,7 @@
             <el-dropdown-menu>
               <el-dropdown-item>您好，{{ currentUser?.displayName }}</el-dropdown-item>
               <el-dropdown-item divided @click="toMember">我的帳戶</el-dropdown-item>
+              <el-dropdown-item  @click="toOrderManage">訂單管理</el-dropdown-item>
               <el-dropdown-item @click="handleSignOut">登出</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -77,25 +78,25 @@
         </div>
         <div class="infos" v-show="navInfo === 'clothing'">
           <div class="info" @click="toClothes('')">所有商品</div>
-          <div class="info" v-show="currentGenderStore.currentGender === 'man'" @click="toClothes('suit')">T 恤 + Polo 衫
+          <div class="info" v-show="currentGenderStore.currentGender === 'man'" @click="toClothes('suit')">T 恤 & Polo 衫
           </div>
-          <div class="info" v-show="currentGenderStore.currentGender === 'woman'" @click="toClothes('suit')">T 恤 + 背心
+          <div class="info" v-show="currentGenderStore.currentGender === 'woman'" @click="toClothes('suit')">T 恤 & 背心
           </div>
           <div class="info" @click="toClothes('shirt')">襯衫 </div>
-          <div class="info" v-show="currentGenderStore.currentGender === 'woman'" @click="toClothes('skirt')">洋裝+裙裝
+          <div class="info" v-show="currentGenderStore.currentGender === 'woman'" @click="toClothes('skirt')">洋裝 & 裙裝
           </div>
           <div class="info" v-show="currentGenderStore.currentGender === 'man'" @click="toClothes('sport-suit')">運動衫
           </div>
-          <div class="info" @click="toClothes('coat')">大衣 + 外套</div>
+          <div class="info" @click="toClothes('coat')">大衣 & 外套</div>
           <div class="info" @click="toClothes('jeans')">牛仔褲</div>
-          <div class="info" @click="toClothes('pant')">長褲 + 短褲</div>
+          <div class="info" @click="toClothes('pant')">長褲 & 短褲</div>
           <div class="info" @click="toClothes('sport')">運動服飾</div>
           <div class="info" @click="toClothes('underwear')">內衣</div>
           <div class="info" @click="toClothes('accessory')">配件</div>
         </div>
         <div class="infos" v-show="navInfo === 'sports'">
           <div class="info" @click="toClothes('sport')">所有商品</div>
-          <div class="info" v-show="currentGenderStore.currentGender === 'man'" @click="toClothes('gym-suit')">T 恤 + 背心
+          <div class="info" v-show="currentGenderStore.currentGender === 'man'" @click="toClothes('gym-suit')">運動T恤 & 背心
           </div>
           <div class="info" v-show="currentGenderStore.currentGender === 'woman'" @click="toClothes('sport-bra')">運動內衣
           </div>
@@ -145,6 +146,7 @@
     <div class="rwd-navs">
       <div class="rwd-nav" @click="toLogin" v-if="!isSignedIn">登入<i class="fa-regular fa-user"></i></div>
       <div class="rwd-nav" @click="toMember" v-if="isSignedIn">我的帳戶<i class="fa-solid fa-user"></i></div>
+      <div class="rwd-nav" @click="toOrderManage" v-if="isSignedIn">訂單管理<i class="fa-regular fa-rectangle-list"></i></div>
       <div class="rwd-nav" @click="toFavorite">喜愛列表<i class="fa-solid fa-heart"></i></div>
       <div class="rwd-nav" @click="toShoppingCart">購物車<i class="fa-solid fa-cart-shopping"></i></div>
       <div class="rwd-nav" @click="handleSignOut" v-if="isSignedIn">登出<i class="fa-solid fa-right-from-bracket"></i></div>
@@ -196,6 +198,7 @@ onMounted(() => {
 //登出
 const isSignedIn = ref(false);
 const handleSignOut = () => {
+  isRwdOpen.value=false
   signOut(auth)
     .then(() => {
       isSignedIn.value = false;
@@ -322,8 +325,15 @@ function toLogin() {
   })
 }
 function toMember() {
+  isRwdOpen.value=false
   router.push({
     path: "/member"
+  })
+}
+function toOrderManage(){
+  isRwdOpen.value=false
+  router.push({
+    path: "/orders"
   })
 }
 function toShoppingCart(){

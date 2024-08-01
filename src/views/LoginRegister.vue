@@ -3,7 +3,7 @@
     <el-input placeholder="名字" v-model="lastName" :class="{ 'error-border': errorName }"></el-input>
     <el-input placeholder="信箱" v-model="email" :class="{ 'error-border': errorEmail }"></el-input>
     <el-input placeholder="電話號碼" v-model="phone" :class="{ 'error-border': errorPhone }"></el-input>
-    <el-input placeholder="密碼" v-model="password" show-password :class="{ 'error-border': errorPassword }"></el-input>
+    <el-input placeholder="請輸入最少6位數密碼" v-model="password" show-password :class="{ 'error-border': errorPassword }"></el-input>
     <el-input placeholder="確認密碼" v-model="passwordCheck" show-password :class="{ 'error-border': errorPassword }" @keydown.enter="signUp"></el-input>
     <div class="button" @click="signUp">註冊</div>
     <div class="notice">已經有帳號?<span @click="toLogin">點我登入</span></div>

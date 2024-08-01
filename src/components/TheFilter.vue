@@ -12,17 +12,17 @@
                 </el-collapse-item>
                 <el-collapse-item title="排序" name="2">
                     <div class="sorts">
-                        <label class="sort">
+                        <label class="sort" @change="sortChanged">
                             <input type="radio" value="original" v-model="sort">推薦排序
                         </label>
                     </div>
                     <div class="sorts">
-                        <label class="sort">
+                        <label class="sort" @change="sortChanged">
                             <input type="radio" value="high" v-model="sort">價格由高至低
                         </label>
                     </div>
                     <div class="sorts">
-                        <label class="sort">
+                        <label class="sort" @change="sortChanged">
                             <input type="radio" value="low" v-model="sort">價格由低至高
                         </label>
                     </div>
@@ -39,7 +39,7 @@
                 <el-collapse-item title="顏色" name="4">
                     <div class="colors">
                         <label class="color" v-for="color in colorOptions" :key="color.value">
-                            <input type="checkbox" :value="color.value" v-model="colors">
+                            <input type="checkbox" :value="color.value" v-model="colors" @change="colorChanged">
                             <div class="spot" :style="{ backgroundColor: color.color }"></div>
                             {{ color.label }}
                         </label>
@@ -71,16 +71,16 @@
                             <div class="type" @click="selectType('')">所有商品</div>
                             <div class="type" @click="selectSale('')">特價商品</div>
                             <div class="type" v-if="currentGenderStore.currentGender == 'woman'"
-                                @click="selectType('suit')">T恤+背心</div>
+                                @click="selectType('suit')">T恤 & 背心</div>
                             <div class="type" v-if="currentGenderStore.currentGender == 'man'"
-                                @click="selectType('t-shirt')">T恤+polo衫
+                                @click="selectType('t-shirt')">T恤 & polo衫
                             </div>
                             <div class="type" @click="selectType('shirt')">襯衫</div>
                             <div class="type" v-if="currentGenderStore.currentGender == 'man'"
                                 @click="selectType('sport-suit')">運動衫</div>
                             <div class="type" v-if="currentGenderStore.currentGender == 'woman'"
-                                @click="selectType('skirt')">洋裝+裙裝</div>
-                            <div class="type" @click="selectType('coat')">大衣+外套</div>
+                                @click="selectType('skirt')">洋裝 & 裙裝</div>
+                            <div class="type" @click="selectType('coat')">大衣 & 外套</div>
                             <div class="type" @click="selectType('jeans')">牛仔褲</div>
                             <div class="type" @click="selectType('pant')">長褲短褲</div>
                             <div class="type" @click="selectType('sport')">運動休閒</div>
@@ -91,7 +91,7 @@
                             <div class="type" @click="selectType('sport')">所有商品</div>
                             <div class="type" @click="selectSale('sport')">特價商品</div>
                             <div class="type" v-if="currentGenderStore.currentGender == 'man'"
-                                @click="selectType('gym-suit')">T恤+背心</div>
+                                @click="selectType('gym-suit')">運動T恤 & 背心</div>
                             <div class="type" v-if="currentGenderStore.currentGender == 'woman'"
                                 @click="selectType('sport-bra')">運動內衣
                             </div>
@@ -169,9 +169,33 @@ const sizeOptions = ['XS', 'S', 'M', 'L', 'XL']
 const accessorySizeOptions = ['24', '25', '26', 'onesize']
 const cupOptions = ['32A', '32B', '32C', '32D', '34A', '34B', '34C', '34D', '36A', '36B', '36C', '36D']
 
+
+function scrollToTop() {
+    if(window.innerWidth<767){
+        window.scrollTo({ top: 0 });
+    }else{
+        window.scrollTo({ top: 500 });
+    }
+    
+}
+
+function sortChanged(){
+    productFilterStore.resetLoad();
+    productFilterStore.filterOpen = false;
+    scrollToTop()
+}
+
+function colorChanged() {
+    productFilterStore.resetLoad();
+    productFilterStore.filterOpen = false;
+    scrollToTop()
+}
+
 function searchKeyWord() {
   productFilterStore.resetLoad();
   productFilterStore.keywordFilter=keyWord.value
+  productFilterStore.filterOpen=false
+  scrollToTop()
 }
 
 function selectSize(size: string) {
@@ -181,15 +205,21 @@ function selectSize(size: string) {
     } else {
         sizes.value.splice(index, 1)
     }
+    productFilterStore.filterOpen=false
+    scrollToTop()
 }
 function selectType(type: string) {
     types.value = type
     productFilterStore.resetLoad()
+    productFilterStore.filterOpen=false
+    scrollToTop()
 }
 function selectSale(type: string) {
     types.value = type
     productFilterStore.isSale = true
     productFilterStore.resetLoad()
+    productFilterStore.filterOpen=false
+    scrollToTop()
 }
 watchEffect(() => {
     productFilterStore.sortFilter = sort.value;
@@ -207,6 +237,7 @@ function cancleAllFilter() {
     colors.value = []
     sizes.value = []
     productFilterStore.typeFilter = undefined
+    productFilterStore.filterOpen = false;
 }
 
 </script>
@@ -214,11 +245,12 @@ function cancleAllFilter() {
 <style scoped>
 .main-filter {
     flex: none;
-    width: 280px;
+    width: 350px;
+    height: 100%;
+    z-index: 80;
     position: absolute;
-    z-index: 200;
     background-color: white;
-    padding-right: 10px;
+    padding: 0 10px;
     box-sizing: border-box;
 }
 
@@ -341,12 +373,13 @@ i{
 @media screen and (max-width:767px){
     .main-filter{
         width: 100%;
-        height: 100vh;
-        
+        height: 100%;
         background-color: white;
         padding: 30px;
         box-sizing: border-box;
-        overflow-y: scroll;
+    }
+    .cancle{
+        font-size: 18px;
     }
     
 }

@@ -822,6 +822,9 @@ img {
     .product {
         width: 100%;
     }
+    .remind{
+        font-size: 20px;
+    }
     .dialog-pic{
         width: 45%;
     }

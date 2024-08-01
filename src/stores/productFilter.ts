@@ -2,6 +2,7 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 
 export const useProductFilterStore = defineStore('productFilter', () => {
+    const filterOpen=ref(false)
     const sortFilter = ref()
     const intervalFilter = ref()
     const colorFilter = ref()
@@ -19,5 +20,5 @@ export const useProductFilterStore = defineStore('productFilter', () => {
     }
 
 
-    return { sortFilter, intervalFilter, colorFilter, sizeFilter, typeFilter, isSale, itemsToShow, loadMoreProducts, resetLoad ,keywordFilter}
+    return { filterOpen,sortFilter, intervalFilter, colorFilter, sizeFilter, typeFilter, isSale, itemsToShow, loadMoreProducts, resetLoad ,keywordFilter}
 })
