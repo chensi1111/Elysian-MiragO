@@ -132,28 +132,23 @@
     </div>
 </template>
 
-<script lang="ts">
-export default {
-    name: "TheFilter"
-}
-</script>
-
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect} from 'vue'
 import { useProductFilterStore } from '@/stores/productFilter';
 import { useCurrentGenderStore } from '@/stores/currentGender';
 const productFilterStore = useProductFilterStore()
 const currentGenderStore = useCurrentGenderStore()
 
-const collapse = ref(['1', '2', '3', '4', '5', '6'])
-const typeCollapse = ref([])
-const keyWord = ref()
-const sort = ref("original")
-const interval = ref([0, 10000])
-const colors = ref([])
+const collapse = ref<string[]>(['1', '2', '3', '4', '5', '6'])
+const typeCollapse = ref<number[]>([])
+const keyWord = ref<string>()
+const sort = ref<string>("original")
+const interval = ref<number[]>([0, 10000])
+const colors = ref<string[]>([])
 const sizes = ref<string[]>([])
-const types = ref()
+const types = ref<string>()
 
+//顏色及尺寸選項
 const colorOptions = [
     { value: 'Black', color: 'black', label: '黑色' },
     { value: 'White', color: 'white', label: '白色' },
@@ -169,7 +164,30 @@ const sizeOptions = ['XS', 'S', 'M', 'L', 'XL']
 const accessorySizeOptions = ['24', '25', '26', 'onesize']
 const cupOptions = ['32A', '32B', '32C', '32D', '34A', '34B', '34C', '34D', '36A', '36B', '36C', '36D']
 
+//localstorage儲存的值
+watchEffect(() => {
+  const savedFilterState = JSON.parse(localStorage.getItem('filterState') || '{}');
+  if (savedFilterState.sortFilter) {
+    sort.value = savedFilterState.sortFilter;
+  }
+  if (savedFilterState.intervalFilter) {
+    interval.value = savedFilterState.intervalFilter;
+  }
+  if (savedFilterState.colorFilter) {
+    colors.value = savedFilterState.colorFilter;
+  }
+  if (savedFilterState.sizeFilter) {
+    sizes.value = savedFilterState.sizeFilter;
+  }
+  if (savedFilterState.typeFilter) {
+    types.value = savedFilterState.typeFilter;
+  }
+  if (savedFilterState.keyWordFilter) {
+    keyWord.value = savedFilterState.keyWordFilter;
+  }
+});
 
+//捲動視窗到最上
 function scrollToTop() {
     if(window.innerWidth<767){
         window.scrollTo({ top: 0 });
@@ -179,6 +197,7 @@ function scrollToTop() {
     
 }
 
+//篩選後關閉篩選器
 function sortChanged(){
     productFilterStore.resetLoad();
     productFilterStore.filterOpen = false;
@@ -221,21 +240,27 @@ function selectSale(type: string) {
     productFilterStore.filterOpen=false
     scrollToTop()
 }
+
+//監聽數據
 watchEffect(() => {
     productFilterStore.sortFilter = sort.value;
     productFilterStore.intervalFilter = interval.value;
     productFilterStore.colorFilter = colors.value;
     productFilterStore.sizeFilter = sizes.value;
     productFilterStore.typeFilter = types.value
+    productFilterStore.keywordFilter = keyWord.value
 });
 watchEffect(() => {
     types.value = productFilterStore.typeFilter
 })
+
+//移除所有篩選
 function cancleAllFilter() {
     sort.value = "original"
     interval.value = [0, 10000]
     colors.value = []
     sizes.value = []
+    keyWord.value=""
     productFilterStore.typeFilter = undefined
     productFilterStore.filterOpen = false;
 }

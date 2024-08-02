@@ -141,7 +141,9 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 const shoppingCartStore = useShoppingCartStore()
 const favoriteProductStore = useFavoriteProductStore()
 const productsInfoStore = useProductsInfoStore()
-console.log(productsInfoStore)
+void productsInfoStore;
+
+//資料
 const products = ref()
 const totalPrice = ref()
 const totalOriginalPrice = ref()
@@ -149,6 +151,7 @@ const totalQuantity = ref()
 const shippingFee = ref()
 const shippingWay = ref()
 const dialogVisible = ref()
+
 watchEffect(() => {
     products.value = shoppingCartStore.cartItems
     shippingFee.value = shoppingCartStore.shippingFee
@@ -178,8 +181,6 @@ function getTotalPrice(product: any) {
 
     return totalPriceForProduct;
 }
-
-
 
 //移除商品
 function removeProduct(product: any) {
@@ -458,6 +459,8 @@ onAuthStateChanged(auth, (user) => {
         currentUser.value = user
     }
 });
+
+//確認訂單
 function toConfirm() {
     if (products.value.length) {
         if (currentUser.value) {
@@ -502,6 +505,7 @@ function toConfirm() {
 
 const productFilterStore = useProductFilterStore()
 const currentGenderStore = useCurrentGenderStore()
+
 function toClothes(filter: string) {
     productFilterStore.isSale = false
     if (currentGenderStore.currentGender === 'man') {

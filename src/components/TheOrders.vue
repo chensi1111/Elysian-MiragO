@@ -48,15 +48,9 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: "TheOrders",
-};
-</script>
-
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from "vue";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, type User } from "firebase/auth";
 import {
   getDoc,
   doc,
@@ -68,11 +62,12 @@ import { db } from "@/services/firebase.js";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { useCurrentOrderStore } from "@/stores/currentOrder";
 
-const loading = ref(true);
+//加載狀態
+const loading = ref<boolean>(true);
 
 //firestore
 const auth = getAuth();
-const currentUser = ref();
+const currentUser = ref<User>();
 onAuthStateChanged(auth, (user) => {
   if (user) {
     currentUser.value = user;
@@ -81,7 +76,7 @@ onAuthStateChanged(auth, (user) => {
 });
 const userOrders = ref();
 
-const getUserOrders = async (user: any) => {
+const getUserOrders = async (user: User|undefined) => {
   if (user) {
     const ordersCollection = collection(db, "users", user.uid, "orders");
     const orderSnapshot = await getDocs(ordersCollection);
@@ -228,7 +223,6 @@ function cancleOrder(orderData: any) {
             }
           }
         }
-
         await batch.commit();
 
         // 重新獲取訂單數據

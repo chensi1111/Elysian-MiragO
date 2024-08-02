@@ -119,6 +119,7 @@ import pantPic from '@/assets/woman/pant.jpg'
 import skirtPic from '@/assets/woman/skirt.jpg'
 import shirtPic from '@/assets/woman/shirt.jpg'
 
+//標題名稱
 const titleName = computed(() => {
   if (productFilterStore.typeFilter === 'sport' ||
       productFilterStore.typeFilter === 'sport-bra' ||
@@ -144,6 +145,7 @@ const titleName = computed(() => {
   return '所有商品';
 });
 
+//導覽篩選選項
 const items = ref<any[]>([
     { title: "T恤 & 背心", image: TshirtPic, type: "suit" },
     { title: "襯衫", image: shirtPic, type: "shirt" },
@@ -161,6 +163,7 @@ const saleProducts = ref<any[]>([])
 const isSaleProducts = ref()
 
 
+//獲取產品資訊
 watchEffect(() => {
     products.value = productsInfoStore.womanProductList.map(product => ({
         ...product,
@@ -186,7 +189,14 @@ watchEffect(() => {
     selectedColor.value = productFilterStore.colorFilter
     selectedSize.value = productFilterStore.sizeFilter
     selectedKeyword.value = productFilterStore.keywordFilter
-
+    localStorage.setItem('filterState', JSON.stringify({
+        typeFilter: productFilterStore.typeFilter,
+        sortFilter: productFilterStore.sortFilter,
+        intervalFilter: productFilterStore.intervalFilter,
+        colorFilter: productFilterStore.colorFilter,
+        sizeFilter: productFilterStore.sizeFilter,
+        keywordFilter: productFilterStore.keywordFilter,
+    }));
 })
 
 // 篩選產品
@@ -476,6 +486,8 @@ const productWidth = computed(() => {
     const gap = 20;
     return `calc((100% - ${gap * (columns.value - 1)}px) / ${columns.value})`;
 });
+
+//視窗大小
 const windowWidth = ref(window.innerWidth);
 function updateWindowWidth() {
     windowWidth.value = window.innerWidth;
@@ -491,6 +503,8 @@ onBeforeUnmount(() => {
     window.removeEventListener('resize', updateWindowWidth);
     window.removeEventListener('resize', changeColumns);
 });
+
+//商品高度數值
 const productHeightNumber = computed(() => {
     if (windowWidth.value >= 1024) {
         return 450
@@ -505,6 +519,7 @@ const productHeightNumber = computed(() => {
     }
 
 })
+//商品高度選項
 const productHeight = computed(() => {
     switch (columns.value) {
         case 4:
@@ -536,6 +551,7 @@ const productContainerHeight = computed(() => {
 })
 
 
+//篩選器位置
 const isFixed = ref(false);
 const filterContainer = ref<HTMLElement | null>(null);
 
@@ -594,41 +610,12 @@ const selectSize = (event: Event, product: any, size: string, stock: number) => 
     event.stopPropagation();
     const calculatedPrice = product.sale ? product.price * 0.5 : product.price;
     const selectedProduct = {
-        name: product.name,
-        img: product.originalImg,
-        img2: product.img2,
-        price: calculatedPrice,
-        size: size,
-        stock: stock,
-        color: product.color,
-        quantity: 1,
-        sale: product.sale,
-        id: product.id,
-        availableColors: product.availableColors,
-        favorite: product.favorite,
-        type: product.type,
-        category: product.category,
-        sizeXS: product.sizeXS,
-        sizeS: product.sizeS,
-        sizeM: product.sizeM,
-        sizeL: product.sizeL,
-        sizeXL: product.sizeXL,
-        size24: product.size24,
-        size25: product.size25,
-        size26: product.size26,
-        size32A: product.size32A,
-        size32B: product.size32B,
-        size32C: product.size32C,
-        size32D: product.size32D,
-        size34A: product.size34A,
-        size34B: product.size34B,
-        size34C: product.size34C,
-        size34D: product.size34D,
-        size36A: product.size36A,
-        size36B: product.size36B,
-        size36C: product.size36C,
-        size36D: product.size36D,
-        onesize: product.onesize,
+      ...product, 
+      img: product.originalImg, 
+      price: calculatedPrice, 
+      size, 
+      stock, 
+      quantity: 1 
     };
 
     shoppingCartStore.addItem(selectedProduct);

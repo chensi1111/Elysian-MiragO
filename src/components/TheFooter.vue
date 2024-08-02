@@ -8,7 +8,6 @@
         <div class="error">{{ errorEmail }}</div>
       </div>
       <div class="button" @click="subscribe">訂閱</div>
-
     </div>
   </div>
   <div class="container" v-if="!smallScreen">
@@ -67,22 +66,16 @@
   </div>
 </template>
 
-
-<script lang="ts">
-export default {
-  name: "TheFooter",
-};
-</script>
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCurrentGenderStore } from "@/stores/currentGender";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, type User } from "firebase/auth";
 import { ElMessage } from 'element-plus';
 
 //訂閱
-const email = ref("")
-const errorEmail = ref("")
+const email = ref<string>("")
+const errorEmail = ref<string>("")
 function subscribe() {
   errorEmail.value=""
   if (!email.value) {
@@ -94,11 +87,10 @@ function subscribe() {
   } else (
     ElMessage({ type: 'success', message: '訂閱成功', })
   )
-
 }
 
 //RWD
-const smallScreen = ref(false)
+const smallScreen = ref<boolean>(false)
 function checkScreenSize() {
   if (window.innerWidth < 767) {
     smallScreen.value = true
@@ -114,9 +106,9 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', checkScreenSize);
 });
 
-
+//firestore
 const auth = getAuth();
-const currentUser = ref()
+const currentUser = ref<User|null>()
 onAuthStateChanged(auth, (user) => {
   if (user) {
     currentUser.value = user
@@ -130,7 +122,7 @@ onMounted(() => {
   });
 });
 
-const isSignedIn = ref(false);
+const isSignedIn = ref<boolean>(false);
 
 //路由
 const router = useRouter()
@@ -157,7 +149,6 @@ function toOrderManage() {
       path: "/login"
     })
   }
-
 }
 function toContact(){
     router.push({
@@ -184,7 +175,6 @@ function toAbout(){
         path:'/custom/about'
     })
 } 
-
 </script>
 
 <style scoped>

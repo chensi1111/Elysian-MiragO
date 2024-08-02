@@ -29,7 +29,6 @@
                     <div class="product-quantity">x{{ product.quantity }}</div>
                     <div class="product-total">TWD{{formattedPrice(getTotalPrice(product))}}</div>
                 </div>
-
             </div>
         </div>
     </div>

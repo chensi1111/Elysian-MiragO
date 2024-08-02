@@ -10,7 +10,7 @@
 import { ref, onMounted, onUnmounted,watch } from 'vue';
 import { useRouter } from 'vue-router';
 
-
+//記數
 const count = ref(3)
 function timeCount() {
     const interval = setInterval(() => {
@@ -28,6 +28,7 @@ onMounted(() => {
     timeCount()
 })
 
+//路由
 const router=useRouter()
 function toMember(){
     router.push({

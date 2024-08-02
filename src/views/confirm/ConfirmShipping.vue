@@ -28,7 +28,6 @@
                 <div class="price">TWD 0</div>
             </div>
         </div>
-
         <div class="sub-title">配送資料</div>
         <div class="info-container" :class="{ active: emailValid }">
             <div class="info">個人資料</div>
@@ -184,7 +183,7 @@ watch(country, (newValue) => {
     districts.value = allDistricts[newValue] || [];
 });
 
-
+//路由&傳遞參數
 const router = useRouter()
 function toPayment() {
     emailValid.value = !!email.value;

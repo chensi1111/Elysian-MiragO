@@ -105,41 +105,11 @@ const shoppingCartStore = useShoppingCartStore()
 const selectSize = (event: Event, product: any, size: string, stock: number) => {
   event.stopPropagation();
   const selectedProduct = {
-    name: product.name,
-    img: product.img,
-    img2: product.img2,
+    ...product,
     price: product.price * 0.5,
-    size: size,
-    stock: stock,
-    color: product.color,
-    quantity: 1,
-    sale: product.sale,
-    id: product.id,
-    availableColors: product.availableColors,
-    favorite: product.favorite,
-    type: product.type,
-    category: product.category,
-    sizeXS: product.sizeXS,
-    sizeS: product.sizeS,
-    sizeM: product.sizeM,
-    sizeL: product.sizeL,
-    sizeXL: product.sizeXL,
-    size24: product.size24,
-    size25: product.size25,
-    size26: product.size26,
-    size32A: product.size32A,
-    size32B: product.size32B,
-    size32C: product.size32C,
-    size32D: product.size32D,
-    size34A: product.size34A,
-    size34B: product.size34B,
-    size34C: product.size34C,
-    size34D: product.size34D,
-    size36A: product.size36A,
-    size36B: product.size36B,
-    size36C: product.size36C,
-    size36D: product.size36D,
-    onesize: product.onesize,
+    size,
+    stock,
+    quantity: 1
   };
 
   shoppingCartStore.addItem(selectedProduct);
@@ -330,7 +300,6 @@ const handleTouchEnd = () => {
   isMoving = false;
 };
 
-
 // 啟用及禁用按鈕
 const setButtonState = (state: boolean) => {
   const leftButton = document.querySelector(".scroll-button.left") as HTMLButtonElement;
@@ -372,9 +341,6 @@ watch(products, async () => {
   updateButtonVisibility();
   loadFavoriteStatus()
 });
-
-
-
 
 //路由
 const router = useRouter()

@@ -12,14 +12,14 @@
           女士
         </div>
       </div>
-      <div class="search" v-if="largeScreen">
+      <div class="search" v-if="windowWidth>=767">
         <el-input v-model="search" placeholder="搜尋" @keydown.enter="searchKeyWord">
           <template #suffix>
             <i class="fa-solid fa-magnifying-glass" @click="searchKeyWord"></i>
           </template>
         </el-input>
       </div>
-      <div class="icons" v-if="!smallScreen">
+      <div class="icons" v-if="windowWidth>=767">
         <i class="fa-regular fa-user" @click="toLogin" v-if="!isSignedIn"></i>
         <el-dropdown>
           <i class="member fa-solid fa-user" @click="toMember" v-if="isSignedIn"></i>
@@ -35,7 +35,7 @@
         <i class="fa-solid fa-heart" @click="toFavorite"></i>
         <i class="fa-solid fa-cart-shopping" @mouseover="openCart"></i>
       </div>
-      <div class="burger" @click="toggleRwd" v-if="smallScreen">
+      <div class="burger" @click="toggleRwd" v-if="windowWidth<767">
         <div class="bar" :class="{ bar1: isRwdOpen, close: !isRwdOpen }"
           :style="{ backgroundColor: isRwdOpen ? 'white' : 'black' }">
           &nbsp;
@@ -128,7 +128,7 @@
       </div>
     </div>
   </div>
-  <div class="rwd" :style="{ right: isRwdOpen ? '0' : '-100%' }" v-if="smallScreen">
+  <div class="rwd" :style="{ right: isRwdOpen ? '0' : '-100%' }" v-if="windowWidth<767">
     <div class="burger rwd-burger" @click="toggleRwd">
       <div class="bar" :class="{ bar1: isRwdOpen, close: !isRwdOpen }"
         :style="{ backgroundColor: isRwdOpen ? 'white' : 'black' }">
@@ -156,18 +156,13 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: "TheHeader",
-};
-</script>
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { useShoppingCartStore } from "@/stores/shoppingCart";
 import { useCurrentGenderStore } from "@/stores/currentGender";
 import { useProductFilterStore } from "@/stores/productFilter";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut, type User } from "firebase/auth";
 import manClothingImg from "@/assets/man/normal.jpg"
 import manSportsImg from "@/assets/man/fitness.jpg"
 import manUnderwearImg from "@/assets/man/underwear.jpg"
@@ -179,9 +174,9 @@ import womanUnderwearImg from "@/assets/woman/underwear.jpg"
 import womanAccessoryImg from "@/assets/woman/accessory.jpg"
 import womanSaleImg from "@/assets/woman/sale.jpg"
 
-
+//firestore
 const auth = getAuth();
-const currentUser = ref()
+const currentUser = ref<User|null>()
 onAuthStateChanged(auth, (user) => {
   if (user) {
     currentUser.value = user
@@ -196,7 +191,7 @@ onMounted(() => {
 });
 
 //登出
-const isSignedIn = ref(false);
+const isSignedIn = ref<boolean>(false);
 const handleSignOut = () => {
   isRwdOpen.value=false
   signOut(auth)
@@ -211,9 +206,8 @@ const handleSignOut = () => {
     });
 };
 
-
 //搜尋功能
-const search = ref("");
+const search = ref<string>("");
 function searchKeyWord() {
   productFilterStore.isSale = false;
   productFilterStore.resetLoad();
@@ -226,11 +220,10 @@ function searchKeyWord() {
       productFilterStore.keywordFilter = search.value
     });
   }
-
 }
 
 //開關側邊欄
-const isOpen = ref(false);
+const isOpen = ref<boolean>(false);
 function toggleSideNav() {
   isOpen.value = !isOpen.value;
 }
@@ -284,7 +277,6 @@ function openCart() {
   isRwdOpen.value=false
   shoppingCartStore.openCart()
 }
-
 
 //路由
 const currentGenderStore = useCurrentGenderStore()
@@ -358,7 +350,6 @@ function toClothes(filter: string | string[]) {
       productFilterStore.typeFilter = filter;
     });
   }
-
 }
 function toSaleClothes(filter: string | string[]) {
   isOpen.value = false
@@ -376,20 +367,10 @@ function toSaleClothes(filter: string | string[]) {
   }
 }
 
-const largeScreen = ref(true)
-const smallScreen = ref(false)
+//視窗大小
+const windowWidth = ref<number>(window.innerWidth);
 function checkScreenSize() {
-  if (window.innerWidth >= 1024) {
-    largeScreen.value = true
-    smallScreen.value = false
-  } else if (window.innerWidth >= 767 && window.innerWidth < 1024) {
-    largeScreen.value = true
-    smallScreen.value = false
-  }
-  else if (window.innerWidth < 767) {
-    largeScreen.value = false
-    smallScreen.value = true
-  }
+  windowWidth.value=window.innerWidth
 }
 onMounted(() => {
   checkScreenSize()
@@ -401,11 +382,10 @@ onBeforeUnmount(() => {
 
 //RWD選單
 //導覽頁
-const isRwdOpen = ref(false);
+const isRwdOpen = ref<boolean>(false);
 function toggleRwd() {
   isRwdOpen.value = !isRwdOpen.value;
 }
-
 </script>
 
 <style scoped>

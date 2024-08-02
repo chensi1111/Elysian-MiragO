@@ -28,6 +28,7 @@ import {getAuth,createUserWithEmailAndPassword,updateProfile,} from "firebase/au
 import {  doc, setDoc } from "firebase/firestore";
 import { db } from "@/services/firebase.js";
 
+//個人資料
 const firstName=ref("")
 const lastName=ref("")
 const fullName=computed(()=>{
@@ -37,13 +38,18 @@ const email=ref("")
 const phone=ref("")
 const password=ref("")
 const passwordCheck=ref("")
+
+//錯誤信息
 const errorName=ref()
 const errorEmail=ref()
 const errorPassword=ref()
 const errorPhone=ref()
+
+//倒數
 const count=ref(3)
 const dialogVisible=ref(false)
 
+//註冊
 const auth = getAuth();
 const signUp = () => {
   errorName.value = "";
@@ -67,7 +73,6 @@ const signUp = () => {
     errorPassword.value = "密碼不相同";
     return;
   }
-  console.log('執行')
   createUserWithEmailAndPassword(auth, email.value, password.value)
     .then(async (userCredential) => {
       const user = userCredential.user;
@@ -119,6 +124,7 @@ const signUp = () => {
     });
 };
 
+//路由
 const router=useRouter()
 function confirmSignUp() {
   dialogVisible.value = false;

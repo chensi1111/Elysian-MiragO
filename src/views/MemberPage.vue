@@ -96,8 +96,9 @@ onAuthStateChanged(auth, (user) => {
         getUserData(user);
     }
 });
-const userData = ref()
 
+//獲取用戶資料
+const userData = ref()
 const getUserData = async (user: any) => {
     if (user) {
         const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -125,6 +126,7 @@ const password=ref()
 const userEdit = ref(false)
 const sameEmail=ref(true)
 
+//檢查信箱是否一樣
 function checkEmail(){
     if(userData.value.email==currentUser.value.email){
         sameEmail.value=true
@@ -142,6 +144,7 @@ watch(userData, ((data) => {
 
 }))
 
+//是否處於更新狀態
 function editUserInfo() {
     userEdit.value = true
 }
@@ -150,6 +153,7 @@ function cancleEditUser() {
     userEdit.value = false
 }
 
+//更新名字
 function saveNameChange() {
     updateProfile(currentUser.value, {
         displayName: fullName.value
@@ -169,6 +173,7 @@ function saveNameChange() {
     });
 }
 
+//更新電話
 async function savePhoneChange(){
     await updateDoc(doc(db, "users", currentUser.value.uid), {
             phone:phone.value
@@ -180,6 +185,7 @@ async function savePhoneChange(){
         getUserData(currentUser.value)
 }
 
+//更新信箱
 async function saveEmailChange(){
     if (currentUser.value) {
     if (email.value === userData.value.email) {
@@ -280,6 +286,7 @@ watch(country, (newValue) => {
     districts.value = allDistricts[newValue] || [];
 });
 
+//是否處於更新狀態
 function addAddress() {
     addressOpen.value = true
 }
@@ -288,6 +295,7 @@ function cancleAddress() {
     addressOpen.value = false
 }
 
+//更新地址
 async function confirmAddress() {
     countryValid.value = !!country.value;
     districtValid.value = !!district.value;

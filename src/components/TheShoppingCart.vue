@@ -52,12 +52,6 @@
     </div>
 </template>
 
-<script lang="ts">
-export default {
-    name: "TheShoppingCart",
-};
-</script>
-
 <script setup lang="ts">
 import { ref, watch,onMounted,onBeforeUnmount, computed } from 'vue';
 import { storeToRefs } from 'pinia';
@@ -67,7 +61,6 @@ import { useCurrentGenderStore } from '@/stores/currentGender';
 import { useRouter ,useRoute} from 'vue-router';
 import { ElMessageBox,ElMessage } from 'element-plus';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-
 
 const shoppingCartStore = useShoppingCartStore();
 const { shoppingCartOpen } = storeToRefs(shoppingCartStore);
@@ -80,24 +73,22 @@ function formattedPrice(price:number){
     return price.toLocaleString()
 }
 
+// 操作購物車
 function plusItem(name: string, size: string,color:string) {
     shoppingCartStore.plusItem(name, size,color);
 }
 function minusItem(name: string, size: string,color:string) {
     shoppingCartStore.minusItem(name, size,color)
 }
-
 function removeItem(name: string, size: string, color:string) {
     shoppingCartStore.removeItem(name, size,color)
 }
 function closeCart() {
     shoppingCartStore.closeCart()
 }
-
 function clearCartTimeOut() {
     shoppingCartStore.clearCloseCartTimeout()
 }
-
 function getTotalPrice(item: any) {
     let totalPriceForItem = 0;
     
@@ -110,8 +101,7 @@ function getTotalPrice(item: any) {
     return totalPriceForItem;
 }
 
-
-
+//監聽
 watch([() => shoppingCartStore.cartItems, () => shoppingCartStore.totalQuantity, () => shoppingCartStore.totalPrice], ([newCartItems, newTotalQuantity, newTotalPrice]) => {
     cartItems.value = newCartItems;
     totalQuantity.value = newTotalQuantity;
@@ -128,10 +118,7 @@ watch(() => shoppingCartStore.cartItems, (newCartItems) => {
     cartItems.value = newCartItems;
 }, { deep: true, immediate: true });
 
-const router=useRouter()
-const route=useRoute()
-const productFilterStore=useProductFilterStore()
-const currentGenderStore=useCurrentGenderStore()
+//firestore
 const auth = getAuth()
 const currentUser = ref()
 onAuthStateChanged(auth, (user) => {
@@ -139,6 +126,12 @@ onAuthStateChanged(auth, (user) => {
         currentUser.value = user
     }
 });
+
+//路由
+const router=useRouter()
+const route=useRoute()
+const productFilterStore=useProductFilterStore()
+const currentGenderStore=useCurrentGenderStore()
 
 function toClothes(filter: string|string[]) {
   productFilterStore.isSale=false
@@ -200,9 +193,9 @@ function toConfirm() {
             }
         )
     }
-    
 }
 
+//視窗大小
 const windowWidth = ref(window.innerWidth);
 const shoppingCartWidth=computed(()=>{
     if(windowWidth.value<=1024){

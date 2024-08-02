@@ -31,6 +31,7 @@ const dialogVisible=ref(false)
 const count=ref(3)
 const auth = getAuth();
 
+//登入
 const signIn = () => {
   errorEmail.value = "";
   errorPassword.value = "";
