@@ -39,7 +39,7 @@
               <i class="fa-solid fa-trash-can"></i>取消訂單
             </div>
             <div class="state">{{ order.state }}</div>
-            <div class="refund">退款處理中</div>
+            <div class="refund" v-if="order.state=='訂單已取消'">退款處理中</div>
           </div>
           <div class="totalPrice">總價 : {{ formattedPrice(order.total) }}</div>
         </div>

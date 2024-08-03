@@ -41,7 +41,7 @@ body {
     width: 30px !important;
   }
   .el-message{
-  width: 100% !important;
+  width:max-content !important;
   padding: 10px 5px !important;
 }
 }

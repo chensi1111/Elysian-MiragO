@@ -1,5 +1,5 @@
 <template>
-    <div class="main-filter">
+    <div class="main-filter" >
         <div class="cancle" @click="cancleAllFilter">移除所有篩選</div>
         <div class="collapse">
             <el-collapse v-model="collapse">
@@ -28,8 +28,8 @@
                     </div>
                 </el-collapse-item>
                 <el-collapse-item title="價格區間" name="3">
-                    <div class="interval">
-                        <el-slider v-model="interval" range show-stops :max="10000" />
+                    <div class="interval" >
+                        <el-slider v-model="interval" range show-stops :max="10000" @change="intervalChanged"/>
                         <div class="interavl-infos">
                             <div class="interval-info">${{ interval[0] }}</div>
                             <div class="interval-info">${{ interval[1] }}</div>
@@ -189,16 +189,18 @@ watchEffect(() => {
 
 //捲動視窗到最上
 function scrollToTop() {
-    if(window.innerWidth<767){
-        window.scrollTo({ top: 0 });
-    }else{
-        window.scrollTo({ top: 500 });
-    }
-    
+   productFilterStore.filterScrollToTop()
 }
 
 //篩選後關閉篩選器
 function sortChanged(){
+    productFilterStore.resetLoad();
+    productFilterStore.filterOpen = false;
+    scrollToTop()
+}
+
+function intervalChanged(){
+    console.log("改變")
     productFilterStore.resetLoad();
     productFilterStore.filterOpen = false;
     scrollToTop()
@@ -403,6 +405,7 @@ i{
         padding: 30px;
         box-sizing: border-box;
     }
+    
     .cancle{
         font-size: 18px;
     }

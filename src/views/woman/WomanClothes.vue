@@ -67,8 +67,8 @@
             </div>
         </div>
         <div class="content">
-            <TheFilter v-show="productFilterStore.filterOpen"></TheFilter>
-            <div class="products">
+            <TheFilter v-show="productFilterStore.filterOpen" :class="{ 'filterFixed': isFixed }"></TheFilter>
+            <div class="products" >
                 <div class="product" v-for="(product, index) in filteredProducts" :key="index"
                     :style="{ width: productWidth, height: productHeight }" @click="toProductInfo(product)">
                     <div class="product-container"
@@ -319,11 +319,6 @@ const selectedIntervalDisplay = computed((): string => {
     return '';
 });
 
-function removeInterval() {
-    selectedInterval.value.splice(0, 2, 0, 10000);
-}
-
-
 // 篩選後的商品
 const filteredProductsFull = computed(() => {
     let result = products.value;
@@ -452,24 +447,33 @@ const filteredProducts = computed(() => {
 //移除標籤
 function removeType() {
     productFilterStore.typeFilter = undefined
+    productFilterStore.filterScrollToTop()
+}
+function removeInterval() {
+    selectedInterval.value.splice(0, 2, 0, 10000);
+    productFilterStore.filterScrollToTop()
 }
 function removeColor(color: string) {
     const index = selectedColor.value.indexOf(color);
     if (index !== -1) {
         selectedColor.value.splice(index, 1);
     }
+    productFilterStore.filterScrollToTop()
 }
 function removeSize(size: string) {
     const index = selectedSize.value.indexOf(size);
     if (index !== -1) {
         selectedSize.value.splice(index, 1);
     }
+    productFilterStore.filterScrollToTop()
 }
 function removeSale() {
     productFilterStore.isSale = false
+    productFilterStore.filterScrollToTop()
 }
 function removeKeyword() {
     productFilterStore.keywordFilter = undefined
+    productFilterStore.filterScrollToTop()
 }
 
 const columns = ref(4);
@@ -558,14 +562,20 @@ const filterContainer = ref<HTMLElement | null>(null);
 const handleScroll = () => {
     if (filterContainer.value) {
         const offsetTop = filterContainer.value.getBoundingClientRect().top;
-        if (windowWidth.value > 767) {
+        if (windowWidth.value > 1024) {
             if (window.scrollY - 300 > offsetTop) {
                 isFixed.value = true;
             } else {
                 isFixed.value = false;
             }
+        } else if (windowWidth.value>=767 && windowWidth.value <= 1024) {
+            if (window.scrollY - 200 > offsetTop) {
+                isFixed.value = true;
+            } else {
+                isFixed.value = false;
+            }
         } else {
-            if (window.scrollY > offsetTop) {
+            if (window.scrollY  + 100> offsetTop) {
                 isFixed.value = true;
             } else {
                 isFixed.value = false;
@@ -574,7 +584,6 @@ const handleScroll = () => {
 
     }
 };
-
 onMounted(() => {
     window.addEventListener('scroll', handleScroll);
 });
@@ -676,8 +685,11 @@ watch(products, async () => {
 //顯示篩選器
 function showFilter() {
     productFilterStore.filterOpen=!productFilterStore.filterOpen
+    if(windowWidth.value<767){
+        window.scrollTo(0, 0);
+    }
 }
-
+    
 //顯示更多商品
 function loadMore() {
     productFilterStore.loadMoreProducts()
@@ -980,15 +992,22 @@ function toProductInfo(product: any) {
     color: white;
     background-color: black;
 }
+.filterFixed{
+    padding-top: 80px;
+}
 
 @media screen and (max-width:1024px) {
     .container {
         padding: 0 10px;
     }
-
+    
     .nav {
         margin-right: 10px;
-        height: 250px;
+        height: 200px;
+    }
+
+    .name{
+        font-size: 16px;
     }
 
     .product-name {
@@ -1063,6 +1082,9 @@ function toProductInfo(product: any) {
         width: 150px;
         height: 30px;
         font-size: 16px;
+    }
+    .filterFixed{
+        padding-top: 115px;
     }
 }
 
