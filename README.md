@@ -1,39 +1,24 @@
-# Elysian MiragO
+# 簡介
 
-This template should help get you started developing with Vue 3 in Vite.
+使用 Vue3所打造的電傷網站，以Vite建立開發環境，使用TypeScripty撰寫，利用Firebase製作會員及資料庫功能，Vue Router處理路由，Pinia狀態管理，Element Plus 作為UI框架和實現 SPA 單頁應用。
 
-## Recommended IDE Setup
+# 技術
+- Vue.js
+- Vite
+- Pinia
+- RWD
+- TypeScript
+- Vue Router
+- Element Plus
+- Firebase Firestore Database ,Authentication和Storage
+- LocalStorage
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+# 架構
+- 首頁:商品導覽頁
+- 商品頁:商品條件篩選，顯示固定數量商品，喜愛列表添加，購物車添加
+- 商品資訊頁:商品詳細資料，切換顏色
+- 購物車:修改商品資訊
+- 會員頁:登入，註冊，修改個人資料，訂單管理
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+# Demo
+https://chensi1111.github.io/Elysian-MiragO/
