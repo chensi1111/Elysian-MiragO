@@ -501,17 +501,16 @@ const productWidth = computed(() => {
 const windowWidth = ref(window.innerWidth);
 function updateWindowWidth() {
     windowWidth.value = window.innerWidth;
+    changeColumns()
 }
 
 onMounted(() => {
     changeColumns()
     window.addEventListener('resize', updateWindowWidth);
-    window.addEventListener('resize', changeColumns);
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener('resize', updateWindowWidth);
-    window.removeEventListener('resize', changeColumns);
 });
 
 //商品高度數值

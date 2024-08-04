@@ -459,17 +459,16 @@ const productWidth = computed(() => {
 const windowWidth = ref(window.innerWidth);
 function updateWindowWidth() {
     windowWidth.value = window.innerWidth;
+    changeColumns()
 }
 
 onMounted(() => {
     changeColumns()
     window.addEventListener('resize', updateWindowWidth);
-    window.addEventListener('resize', changeColumns);
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener('resize', updateWindowWidth);
-    window.removeEventListener('resize', changeColumns);
 });
 
 //商品高度數值
@@ -666,6 +665,7 @@ function showFilter() {
 
 function confirmFilter(){
     productFilterStore.filterOpen = false;
+    window.scrollTo(0,0)
 }
 function cancleFilter() {
     productFilterStore.sortFilter = "original" 

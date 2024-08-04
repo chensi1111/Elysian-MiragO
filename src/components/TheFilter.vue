@@ -73,7 +73,7 @@
                             <div class="type" v-if="currentGenderStore.currentGender == 'woman'"
                                 @click="selectType('suit')">T恤 & 背心</div>
                             <div class="type" v-if="currentGenderStore.currentGender == 'man'"
-                                @click="selectType('t-shirt')">T恤 & polo衫
+                                @click="selectType('suit')">T恤 & polo衫
                             </div>
                             <div class="type" @click="selectType('shirt')">襯衫</div>
                             <div class="type" v-if="currentGenderStore.currentGender == 'man'"
