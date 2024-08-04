@@ -22,3 +22,8 @@
 
 # Demo
 https://chensi1111.github.io/Elysian-MiragO/
+
+測試帳號:example@example.com
+
+密碼:00000000
+
