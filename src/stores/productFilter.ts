@@ -15,14 +15,23 @@ export const useProductFilterStore = defineStore("productFilter", () => {
   };
 
   //篩選器
-  const sortFilter = ref();
-  const intervalFilter = ref();
-  const colorFilter = ref();
-  const sizeFilter = ref();
+  const sortFilter = ref("original");
+  const intervalFilter = ref([0, 10000]);
+  const colorFilter = ref([]);
+  const sizeFilter = ref<string[]>([]);
   const typeFilter = ref();
   const keywordFilter = ref();
   const isSale = ref(false);
 
+  const clearFilterWithoutType = () => {
+    if (typeFilter.value) {
+      intervalFilter.value = [0, 10000];
+      colorFilter.value = [];
+      sizeFilter.value = [];
+      keywordFilter.value = undefined;
+      isSale.value = false;
+    }
+  };
   //顯示商品數量
   const itemsToShow = ref(20);
   const loadMoreProducts = () => {
@@ -45,5 +54,6 @@ export const useProductFilterStore = defineStore("productFilter", () => {
     loadMoreProducts,
     resetLoad,
     keywordFilter,
+    clearFilterWithoutType,
   };
 });

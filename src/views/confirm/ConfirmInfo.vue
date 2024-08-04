@@ -3,15 +3,15 @@
         <div class="title">訂單總結</div>
         <div class="infos">
             <div class="info">小計</div>
-            <div class="price">TWD{{ formattedPrice(totalPrice) }}</div>
+            <div class="price">TWD {{ formattedPrice(totalPrice) }}</div>
         </div>
         <div class="infos">
             <div class="info">運費</div>
-            <div class="price">TWD{{ shippingFee }}</div>
+            <div class="price">TWD {{ shippingFee }}</div>
         </div>
         <div class="infos total">
             <div class="info">總共</div>
-            <div class="price">TWD{{ formattedPrice(totalPrice + shippingFee) }}</div>
+            <div class="price">TWD {{ formattedPrice(totalPrice + shippingFee) }}</div>
         </div>
         <div class="quantity">共{{ totalQuantity }}件</div>
         <div class="product" v-for="(product, index) in products" :key="index">
@@ -25,9 +25,9 @@
                     <div class="size">尺碼 : {{ product.size }}</div>
                 </div>
                 <div class="prices">
-                    <div class="product-price">TWD{{ formattedPrice(product.price) }}</div>
+                    <div class="product-price">TWD {{ formattedPrice(product.price) }}</div>
                     <div class="product-quantity">x{{ product.quantity }}</div>
-                    <div class="product-total">TWD{{formattedPrice(getTotalPrice(product))}}</div>
+                    <div class="product-total">TWD {{formattedPrice(getTotalPrice(product))}}</div>
                 </div>
             </div>
         </div>

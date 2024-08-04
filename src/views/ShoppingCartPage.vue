@@ -20,14 +20,14 @@
                             <div class="special">3件8折</div>
                         </div>
                         <div class="mid">
-                            <div class="price">TWD{{ formattedPrice(product.price) }}</div>
+                            <div class="price">TWD {{ formattedPrice(product.price) }}</div>
                             <div class="quantity"><el-input-number :min="1" :max="showConfirmSizeStock(product)"
                                     v-model="product.quantity" /></div>
                             <div class="prices">
                                 <div class="totalPrice"
                                     :style="{ textDecoration: product.quantity > 2 ? 'line-through' : 'none' }">
-                                    TWD{{ formattedPrice(product.quantity * product.price) }}</div>
-                                <div class="totalPrice sale" v-if="product.quantity > 2">TWD{{
+                                    TWD {{ formattedPrice(product.quantity * product.price) }}</div>
+                                <div class="totalPrice sale" v-if="product.quantity > 2">TWD {{
                                     formattedPrice(getTotalPrice(product)) }}</div>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                 <div class="info-title">訂單詳情</div>
                 <div class="info-container">
                     <div class="info" v-if="totalOriginalPrice - totalPrice > 0">訂單折扣</div>
-                    <div class="info discount" v-if="totalOriginalPrice - totalPrice > 0">TWD{{
+                    <div class="info discount" v-if="totalOriginalPrice - totalPrice > 0">TWD {{
                         formattedPrice(totalOriginalPrice - totalPrice) }}</div>
                 </div>
                 <el-select v-model="shippingWay">
@@ -61,11 +61,11 @@
                 </el-select>
                 <div class="info-container">
                     <div class="info">運費(5件免運)</div>
-                    <div class="info">TWD{{ shippingFee }}</div>
+                    <div class="info">TWD {{ shippingFee }}</div>
                 </div>
                 <div class="info-container">
                     <div class="info">總計</div>
-                    <div class="info">TWD{{ formattedPrice(totalPrice + shippingFee) }}</div>
+                    <div class="info">TWD {{ formattedPrice(totalPrice + shippingFee) }}</div>
                 </div>
                 <div class="confirm" @click="toConfirm">結帳</div>
             </div>

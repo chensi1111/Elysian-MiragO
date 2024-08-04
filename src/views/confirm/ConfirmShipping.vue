@@ -3,7 +3,7 @@
         <div class="title">結帳</div>
         <div class="info-container" :class="{ active: !emailValid }">
             <div class="info">E-mail</div>
-            <div class="info">請輸入電子信箱已繼續結帳</div>
+            <div class="info">請輸入電子信箱以繼續結帳</div>
             <div class="remind">該信箱將會收到訂單狀態更新</div>
             <div class="email-input">
                 <el-input type="text" v-model="email" placeholder="電子信箱" @keydown.enter="checkEmail"/>

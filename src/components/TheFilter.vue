@@ -4,7 +4,7 @@
         <div class="collapse">
             <el-collapse v-model="collapse">
                 <el-collapse-item title="搜尋" name="1">
-                    <el-input v-model="keyWord" placeholder="關鍵字" @keydown.enter="searchKeyWord">
+                    <el-input v-model="productFilterStore.keywordFilter" placeholder="關鍵字" @keydown.enter="searchKeyWord">
                         <template #suffix>
                             <i class="fa-solid fa-magnifying-glass" @click="searchKeyWord"></i>
                         </template>
@@ -13,33 +13,33 @@
                 <el-collapse-item title="排序" name="2">
                     <div class="sorts">
                         <label class="sort" @change="sortChanged">
-                            <input type="radio" value="original" v-model="sort">推薦排序
+                            <input type="radio" value="original" v-model="productFilterStore.sortFilter">推薦排序
                         </label>
                     </div>
                     <div class="sorts">
                         <label class="sort" @change="sortChanged">
-                            <input type="radio" value="high" v-model="sort">價格由高至低
+                            <input type="radio" value="high" v-model="productFilterStore.sortFilter">價格由高至低
                         </label>
                     </div>
                     <div class="sorts">
                         <label class="sort" @change="sortChanged">
-                            <input type="radio" value="low" v-model="sort">價格由低至高
+                            <input type="radio" value="low" v-model="productFilterStore.sortFilter">價格由低至高
                         </label>
                     </div>
                 </el-collapse-item>
                 <el-collapse-item title="價格區間" name="3">
                     <div class="interval" >
-                        <el-slider v-model="interval" range show-stops :max="10000" @change="intervalChanged"/>
+                        <el-slider v-model="productFilterStore.intervalFilter" range show-stops :max="10000" @change="intervalChanged"/>
                         <div class="interavl-infos">
-                            <div class="interval-info">${{ interval[0] }}</div>
-                            <div class="interval-info">${{ interval[1] }}</div>
+                            <div class="interval-info">${{ productFilterStore.intervalFilter[0] }}</div>
+                            <div class="interval-info">${{ productFilterStore.intervalFilter[1] }}</div>
                         </div>
                     </div>
                 </el-collapse-item>
                 <el-collapse-item title="顏色" name="4">
                     <div class="colors">
                         <label class="color" v-for="color in colorOptions" :key="color.value">
-                            <input type="checkbox" :value="color.value" v-model="colors" @change="colorChanged">
+                            <input type="checkbox" :value="color.value" v-model="productFilterStore.colorFilter" @change="colorChanged">
                             <div class="spot" :style="{ backgroundColor: color.color }"></div>
                             {{ color.label }}
                         </label>
@@ -48,19 +48,19 @@
                 <el-collapse-item title="尺寸" name="5">
                     <div class="sizes">
                         <div class="size" v-for="(size, index) in sizeOptions" :key="index" @click="selectSize(size)"
-                            :class="{ 'select': sizes.includes(size) }">
+                            :class="{ 'select': productFilterStore.sizeFilter.includes(size) }">
                             {{ size }}
                         </div>
                     </div>
                     <div class="sizes">
                         <div class="size" v-for="(size, index) in accessorySizeOptions" :key="index"
-                            @click="selectSize(size)" :class="{ 'select': sizes.includes(size) }">
+                            @click="selectSize(size)" :class="{ 'select': productFilterStore.sizeFilter.includes(size) }">
                             {{ size }}
                         </div>
                     </div>
                     <div class="sizes" v-if="currentGenderStore.currentGender == 'woman'">
                         <div class="size" v-for="(cup, index) in cupOptions" :key="index" @click="selectSize(cup)"
-                            :class="{ 'select': sizes.includes(cup) }">
+                            :class="{ 'select': productFilterStore.sizeFilter.includes(cup) }">
                             {{ cup }}
                         </div>
                     </div>
@@ -141,12 +141,6 @@ const currentGenderStore = useCurrentGenderStore()
 
 const collapse = ref<string[]>(['1', '2', '3', '4', '5', '6'])
 const typeCollapse = ref<number[]>([])
-const keyWord = ref<string>()
-const sort = ref<string>("original")
-const interval = ref<number[]>([0, 10000])
-const colors = ref<string[]>([])
-const sizes = ref<string[]>([])
-const types = ref<string>()
 
 //顏色及尺寸選項
 const colorOptions = [
@@ -168,23 +162,27 @@ const cupOptions = ['32A', '32B', '32C', '32D', '34A', '34B', '34C', '34D', '36A
 watchEffect(() => {
   const savedFilterState = JSON.parse(localStorage.getItem('filterState') || '{}');
   if (savedFilterState.sortFilter) {
-    sort.value = savedFilterState.sortFilter;
+    productFilterStore.sortFilter = savedFilterState.sortFilter;
   }
   if (savedFilterState.intervalFilter) {
-    interval.value = savedFilterState.intervalFilter;
+    productFilterStore.intervalFilter = savedFilterState.intervalFilter;
   }
   if (savedFilterState.colorFilter) {
-    colors.value = savedFilterState.colorFilter;
+    productFilterStore.colorFilter = savedFilterState.colorFilter;
   }
   if (savedFilterState.sizeFilter) {
-    sizes.value = savedFilterState.sizeFilter;
+    productFilterStore.sizeFilter = savedFilterState.sizeFilter;
   }
   if (savedFilterState.typeFilter) {
-    types.value = savedFilterState.typeFilter;
+    productFilterStore.typeFilter = savedFilterState.typeFilter;
   }
   if (savedFilterState.keyWordFilter) {
-    keyWord.value = savedFilterState.keyWordFilter;
+    productFilterStore.keywordFilter = savedFilterState.keyWordFilter;
   }
+  if(savedFilterState.saleFilter){
+    productFilterStore.isSale=savedFilterState.saleFilter
+  }
+  
 });
 
 //捲動視窗到最上
@@ -195,75 +193,78 @@ function scrollToTop() {
 //篩選後關閉篩選器
 function sortChanged(){
     productFilterStore.resetLoad();
-    productFilterStore.filterOpen = false;
-    scrollToTop()
+    if(window.innerWidth>=767){
+        scrollToTop()
+    }
+    
 }
 
 function intervalChanged(){
-    console.log("改變")
     productFilterStore.resetLoad();
-    productFilterStore.filterOpen = false;
-    scrollToTop()
+    if(window.innerWidth>=767){
+        scrollToTop()
+    }
+    
 }
 
 function colorChanged() {
     productFilterStore.resetLoad();
-    productFilterStore.filterOpen = false;
-    scrollToTop()
+    if(window.innerWidth>=767){
+        scrollToTop()
+    }
+    
 }
 
 function searchKeyWord() {
   productFilterStore.resetLoad();
-  productFilterStore.keywordFilter=keyWord.value
-  productFilterStore.filterOpen=false
-  scrollToTop()
+  if(window.innerWidth>=767){
+    scrollToTop()
+  }
+  
 }
 
 function selectSize(size: string) {
-    const index = sizes.value.indexOf(size)
+    const index = productFilterStore.sizeFilter.indexOf(size)
     if (index === -1) {
-        sizes.value.push(size)
+        productFilterStore.sizeFilter.push(size)
     } else {
-        sizes.value.splice(index, 1)
+        productFilterStore.sizeFilter.splice(index, 1)
     }
-    productFilterStore.filterOpen=false
-    scrollToTop()
+    if(window.innerWidth>=767){
+        scrollToTop()
+    }
+    
 }
 function selectType(type: string) {
-    types.value = type
+    productFilterStore.clearFilterWithoutType()
+    productFilterStore.typeFilter = type
     productFilterStore.resetLoad()
-    productFilterStore.filterOpen=false
-    scrollToTop()
+    if(window.innerWidth>=767){
+        scrollToTop()
+    }
+    
 }
 function selectSale(type: string) {
-    types.value = type
+    productFilterStore.clearFilterWithoutType()
+    productFilterStore.typeFilter = type
     productFilterStore.isSale = true
     productFilterStore.resetLoad()
-    productFilterStore.filterOpen=false
-    scrollToTop()
+    if(window.innerWidth>=767){
+        scrollToTop()
+    }
+    
 }
 
-//監聽數據
-watchEffect(() => {
-    productFilterStore.sortFilter = sort.value;
-    productFilterStore.intervalFilter = interval.value;
-    productFilterStore.colorFilter = colors.value;
-    productFilterStore.sizeFilter = sizes.value;
-    productFilterStore.typeFilter = types.value
-    productFilterStore.keywordFilter = keyWord.value
-});
-watchEffect(() => {
-    types.value = productFilterStore.typeFilter
-})
 
 //移除所有篩選
 function cancleAllFilter() {
-    sort.value = "original"
-    interval.value = [0, 10000]
-    colors.value = []
-    sizes.value = []
-    keyWord.value=""
+    productFilterStore.sortFilter = "original" 
+    productFilterStore.intervalFilter = [0, 10000]
+    productFilterStore.colorFilter = []
+    productFilterStore.sizeFilter = []
+    productFilterStore.keywordFilter=""
     productFilterStore.typeFilter = undefined
+    productFilterStore.isSale=false
     productFilterStore.filterOpen = false;
 }
 
@@ -274,8 +275,6 @@ function cancleAllFilter() {
     flex: none;
     width: 350px;
     height: 100%;
-    z-index: 80;
-    position: absolute;
     background-color: white;
     padding: 0 10px;
     box-sizing: border-box;
@@ -397,7 +396,12 @@ i{
     text-decoration: underline;
     font-weight: bold;
 }
-@media screen and (max-width:767px){
+@media screen and (max-width:1024px){
+    .main-filter{
+        width: 250px;
+    }
+}
+@media screen and (max-width:766px){
     .main-filter{
         width: 100%;
         height: 100%;

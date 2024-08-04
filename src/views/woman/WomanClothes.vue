@@ -15,7 +15,11 @@
         </div>
         <div ref="filterContainer" class="filter-container" :class="{ 'is-fixed': isFixed }">
             <div class="filter " @click="showFilter" v-show="!productFilterStore.filterOpen">篩選及排序<i class="fa-solid fa-sliders"></i></div>
-            <div class="filter " @click="showFilter" v-show="productFilterStore.filterOpen">關閉篩選器<i class="fa-solid fa-sliders"></i></div>
+            <div class="filter " @click="showFilter" v-show="productFilterStore.filterOpen" v-if="windowWidth>=767">關閉篩選器<i class="fa-solid fa-sliders"></i></div>
+            <div class="options" v-show="productFilterStore.filterOpen" v-if="windowWidth<767">
+                <div class="option" @click="confirmFilter">完成</div>
+                <div class="option" @click="cancleFilter">取消</div>
+            </div>
             <div class="filter-types">
                 <div class="filter-type" @click="removeType" v-show="selectedTypeName">{{ selectedTypeName }}
                     <i class="fa-solid fa-x"></i>
@@ -68,7 +72,7 @@
         </div>
         <div class="content">
             <TheFilter v-show="productFilterStore.filterOpen" :class="{ 'filterFixed': isFixed }"></TheFilter>
-            <div class="products" >
+            <div class="products" :class="{ 'fixed': isFixed }" v-show="showProducts" >
                 <div class="product" v-for="(product, index) in filteredProducts" :key="index"
                     :style="{ width: productWidth, height: productHeight }" @click="toProductInfo(product)">
                     <div class="product-container"
@@ -100,7 +104,7 @@
                 </div>
             </div>
         </div>
-        <div class="load" @click="loadMore" v-if="!(filteredProducts.length == filteredProductsFull.length)">顯示更多</div>
+        <div class="load" @click="loadMore" v-if="!(filteredProducts.length == filteredProductsFull.length)" v-show="showProducts">顯示更多</div>
     </div>
 
 </template>
@@ -196,11 +200,13 @@ watchEffect(() => {
         colorFilter: productFilterStore.colorFilter,
         sizeFilter: productFilterStore.sizeFilter,
         keywordFilter: productFilterStore.keywordFilter,
+        saleFilter:productFilterStore.isSale
     }));
 })
 
 // 篩選產品
 function productFilter(type: string) {
+    productFilterStore.clearFilterWithoutType()
     productFilterStore.typeFilter = type;
     productFilterStore.resetLoad()
 }
@@ -512,9 +518,9 @@ onBeforeUnmount(() => {
 const productHeightNumber = computed(() => {
     if (windowWidth.value >= 1024) {
         return 450
-    } else if (windowWidth.value >= 767 && windowWidth.value < 1024) {
+    } else if (windowWidth.value > 767 && windowWidth.value < 1024) {
         return 400
-    } else if (windowWidth.value < 767 && windowWidth.value > 414) {
+    } else if (windowWidth.value <= 767 && windowWidth.value > 414) {
         return 200
     } else if (windowWidth.value <= 414) {
         return 50
@@ -584,6 +590,17 @@ const handleScroll = () => {
 
     }
 };
+
+const showProducts=computed(()=>{
+    if(windowWidth.value<767){
+        if(productFilterStore.filterOpen){
+            return false
+        }else{
+            return true
+        }
+    }
+    return true
+})
 onMounted(() => {
     window.addEventListener('scroll', handleScroll);
 });
@@ -688,6 +705,21 @@ function showFilter() {
     if(windowWidth.value<767){
         window.scrollTo(0, 0);
     }
+}
+
+function confirmFilter(){
+    productFilterStore.filterOpen = false;
+    window.scrollTo(0,0)
+}
+function cancleFilter() {
+    productFilterStore.sortFilter = "original" 
+    productFilterStore.intervalFilter = [0, 10000]
+    productFilterStore.colorFilter = []
+    productFilterStore.sizeFilter = []
+    productFilterStore.keywordFilter=""
+    productFilterStore.typeFilter = undefined
+    productFilterStore.isSale=false
+    productFilterStore.filterOpen = false;
 }
     
 //顯示更多商品
@@ -798,7 +830,6 @@ function toProductInfo(product: any) {
     display: flex;
     justify-content: center;
     align-items: center;
-
 }
 
 .filter:hover {
@@ -807,7 +838,6 @@ function toProductInfo(product: any) {
 
 .filter i {
     margin-left: 10px;
-
 }
 
 .right {
@@ -859,7 +889,9 @@ function toProductInfo(product: any) {
     width: 100%;
     height: 100%;
 }
-
+.products.fixed{
+    padding-top: 80px;
+}
 .product {
     margin-bottom: 20px;
     box-sizing: border-box;
@@ -1024,6 +1056,27 @@ function toProductInfo(product: any) {
 }
 
 @media screen and (max-width:767px) {
+    .options{
+        width: 100%;
+        margin-bottom: 10px;
+        display: flex;
+    }
+
+    .option{
+        width: 50%;
+        height: 40px;
+        background-color: black;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .option:first-child{
+        margin-right: 15px;
+    }
+    .option:hover{
+        cursor: pointer;
+    }
     .title {
         font-size: 25px;
         margin: 20px 0;

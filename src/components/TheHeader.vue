@@ -163,6 +163,7 @@ import { useShoppingCartStore } from "@/stores/shoppingCart";
 import { useCurrentGenderStore } from "@/stores/currentGender";
 import { useProductFilterStore } from "@/stores/productFilter";
 import { getAuth, onAuthStateChanged, signOut, type User } from "firebase/auth";
+import { ElMessage } from "element-plus";
 import manClothingImg from "@/assets/man/normal.jpg"
 import manSportsImg from "@/assets/man/fitness.jpg"
 import manUnderwearImg from "@/assets/man/underwear.jpg"
@@ -199,7 +200,12 @@ const handleSignOut = () => {
       isSignedIn.value = false;
       router.push({
         path: '/login'
-      })
+      });
+      ElMessage({
+          message: "登出成功",
+          type: "success",
+          plain: true,
+        });
     })
     .catch((error) => {
       console.log("登出失敗", error);
@@ -214,12 +220,15 @@ function searchKeyWord() {
   if (currentGenderStore.currentGender === 'man') {
     router.push({ path: "/man/clothes" }).then(() => {
       productFilterStore.keywordFilter = search.value
+      search.value=""
     });
   } else {
     router.push({ path: "/woman/clothes" }).then(() => {
       productFilterStore.keywordFilter = search.value
+      search.value=""
     });
   }
+  
 }
 
 //開關側邊欄
@@ -343,10 +352,12 @@ function toClothes(filter: string | string[]) {
 
   if (currentGenderStore.currentGender === 'man') {
     router.push({ path: "/man/clothes" }).then(() => {
+      productFilterStore.clearFilterWithoutType()
       productFilterStore.typeFilter = filter;
     });
   } else {
     router.push({ path: "/woman/clothes" }).then(() => {
+      productFilterStore.clearFilterWithoutType()
       productFilterStore.typeFilter = filter;
     });
   }
@@ -358,10 +369,12 @@ function toSaleClothes(filter: string | string[]) {
 
   if (currentGenderStore.currentGender === 'man') {
     router.push({ path: "/man/clothes" }).then(() => {
+      productFilterStore.clearFilterWithoutType()
       productFilterStore.typeFilter = filter;
     });
   } else {
     router.push({ path: "/woman/clothes" }).then(() => {
+      productFilterStore.clearFilterWithoutType()
       productFilterStore.typeFilter = filter;
     });
   }

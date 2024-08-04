@@ -85,7 +85,8 @@ function subscribe() {
     errorEmail.value = 'Email格式錯誤'
     ElMessage({ type: 'error', message: '訂閱失敗', })
   } else (
-    ElMessage({ type: 'success', message: '訂閱成功', })
+    ElMessage({ type: 'success', message: `${email.value} 訂閱成功`, }),
+    email.value=""
   )
 }
 

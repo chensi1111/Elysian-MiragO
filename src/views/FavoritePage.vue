@@ -1,7 +1,7 @@
 <template>
     <div class="container">
-        <div class="title">您的願望清單</div>
-        <div class="remind" v-show="!products.length" @click="toClothes('')">您的願望清單為空，點我馬上去選購</div>
+        <div class="title">您的喜愛列表</div>
+        <div class="remind" v-show="!products.length" @click="toClothes('')">您的喜愛列表為空，點我馬上去選購</div>
         <div class="product" v-for="product in products" :key="product.name">
             <div class="info">
                 <div class="pic">

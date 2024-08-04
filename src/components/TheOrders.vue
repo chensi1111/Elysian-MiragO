@@ -257,7 +257,10 @@ function cancleOrder(orderData: any) {
   width: 100%;
   font-size: 16px;
 }
-
+.orderID{
+  font-size: 14px;
+  margin-right: 15px;
+}
 .orderTime {
   font-size: 14px;
 }
