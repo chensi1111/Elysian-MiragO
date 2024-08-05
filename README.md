@@ -1,6 +1,6 @@
 # 簡介
 
-使用 Vue3所打造的電傷網站，以Vite建立開發環境，使用TypeScripty撰寫，利用Firebase製作會員及資料庫功能，Vue Router處理路由，Pinia狀態管理，Element Plus 作為UI框架和實現 SPA 單頁應用。
+使用 Vue3所打造的電商網站，以Vite建立開發環境，使用TypeScript撰寫，利用Firebase製作會員及資料庫功能，Vue Router處理路由，Pinia狀態管理，Element Plus 作為UI框架和實現 SPA 單頁應用。
 
 # 技術
 - Vue.js
@@ -10,7 +10,7 @@
 - TypeScript
 - Vue Router
 - Element Plus
-- Firebase Firestore Database ,Authentication和Storage
+- Firebase : Firestore Database ,Authentication和Storage
 - LocalStorage
 
 # 架構
